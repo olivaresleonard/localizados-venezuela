@@ -34,7 +34,8 @@ export function LoginForm() {
     <div className="mx-auto max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
       <h2 className="text-xl font-semibold text-slate-900">Acceso moderadores</h2>
       <p className="mt-2 text-sm text-slate-600">
-        Usa la clave generada con <code className="rounded bg-slate-100 px-1">npm run admin:secret</code>
+        Usa la clave generada con{" "}
+        <code className="rounded bg-slate-100 px-1">npm run admin:secret</code>
       </p>
       <form onSubmit={onSubmit} className="mt-6 space-y-4">
         <label className="block text-sm font-medium text-slate-700">

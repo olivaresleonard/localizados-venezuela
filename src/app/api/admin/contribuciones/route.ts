@@ -12,9 +12,7 @@ export async function GET(req: Request) {
   const url = new URL(req.url);
   const estado = url.searchParams.get("estado") ?? "pending";
 
-  const rows = await Contribucion.find({ estado })
-    .sort({ createdAt: -1 })
-    .lean();
+  const rows = await Contribucion.find({ estado }).sort({ createdAt: -1 }).lean();
 
   const ids = rows.map((r) => r._id);
   const localizados = await Localizado.find({ contribucionId: { $in: ids } }).lean();
@@ -33,7 +31,9 @@ export async function GET(req: Request) {
       imagenPath: r.imagenPath,
       imagenNombreOriginal: r.imagenNombreOriginal,
       createdAt: r.createdAt,
-      localizadoId: locMap.get(String(r._id)) ? String(locMap.get(String(r._id))!._id) : null,
+      localizadoId: locMap.get(String(r._id))
+        ? String(locMap.get(String(r._id))!._id)
+        : null,
     })),
   });
 }
