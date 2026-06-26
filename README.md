@@ -204,11 +204,11 @@ Contribucion → envíos ciudadanos (persona o imagen de listado)
 
 ## Roadmap
 
-| Fase                                                              | Estado |
-| ----------------------------------------------------------------- | ------ |
-| Seed, búsqueda, páginas individuales, API, contribuciones en cola | ✅     |
-| Importación OCR desde Markdown (`seed:ocr`)                         | ✅     |
-| Moderación, OCR automático de imágenes, publicación de contribuciones | 🔜  |
+| Fase                                                                  | Estado |
+| --------------------------------------------------------------------- | ------ |
+| Seed, búsqueda, páginas individuales, API, contribuciones en cola     | ✅     |
+| Importación OCR desde Markdown (`seed:ocr`)                           | ✅     |
+| Moderación, OCR automático de imágenes, publicación de contribuciones | 🔜     |
 
 ## Stack
 

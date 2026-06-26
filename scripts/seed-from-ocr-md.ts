@@ -280,7 +280,9 @@ async function main() {
     await flushBatch(batch, `#${batchNum} (final)`);
   }
 
-  const totalLugares = DRY_RUN ? lugares.length + lugarStats.created : await Lugar.countDocuments();
+  const totalLugares = DRY_RUN
+    ? lugares.length + lugarStats.created
+    : await Lugar.countDocuments();
   const totalPublicados = DRY_RUN
     ? existingKeys.size
     : await Localizado.countDocuments({ estado: "published" });
