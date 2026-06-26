@@ -1,9 +1,9 @@
 # CLAUDE.md
 
-This repository uses `AGENTS.md` as the canonical instruction file for coding
-agents.
+Este repositorio usa `AGENTS.md` como archivo canónico de instrucciones para
+agentes de código.
 
-Claude Code and Claude-style agents should read `AGENTS.md` first and follow it
-as the source of truth for setup, validation, architecture, safety, and PR
-expectations. If this file and `AGENTS.md` ever diverge, `AGENTS.md` wins; update
-this file only as a compatibility pointer.
+Claude Code y agentes compatibles con Claude deben leer primero `AGENTS.md` y
+seguirlo como fuente de verdad para configuración, validación, arquitectura,
+seguridad y expectativas de PR. Si este archivo y `AGENTS.md` llegan a divergir,
+gana `AGENTS.md`; actualiza este archivo solo como puntero de compatibilidad.

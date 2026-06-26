@@ -1,28 +1,30 @@
 # AGENTS.md
 
-Guidance for AI coding agents working in this repository. Humans should start
-with `README.md`; this file is the concise operational map for agents.
+Guía para agentes de código que trabajen en este repositorio. Las personas
+deben empezar por `README.md`; este archivo es el mapa operativo corto para
+agentes.
 
-## Project Mission
+## Misión del proyecto
 
-Localizados Venezuela is a Spanish-first public registry of people who have
-already been located after the Venezuela earthquake. The product is intentionally
-limited to localized people, places, public search, citizen contributions, and
-moderation. Do not turn this app into a missing-person reporting flow; the README
-links to the separate missing-persons project.
+Localizados Venezuela es un registro público, en español primero, de personas
+que ya fueron localizadas después del sismo en Venezuela. El producto está
+limitado a personas localizadas, lugares, búsqueda pública, contribuciones
+ciudadanas y moderación. No conviertas esta app en un flujo para reportar
+desaparecidos; el README enlaza el proyecto separado para desaparecidos.
 
-Because the site is life-safety-adjacent, preserve clarity, privacy, and
-moderation boundaries. Citizen submissions and OCR output are untrusted until a
-moderator approves them.
+Como el sitio está cerca de un contexto de seguridad y ayuda pública, conserva
+la claridad, la privacidad y los límites de moderación. Las contribuciones
+ciudadanas y los resultados de OCR no son confiables hasta que una persona
+moderadora los apruebe.
 
 ## Stack
 
 - Next.js 15 App Router, React 19, TypeScript, Tailwind CSS
-- MongoDB through Mongoose
+- MongoDB vía Mongoose
 - npm, Node.js 22+
 - ESLint, Prettier, Husky, lint-staged
 
-## Local Setup
+## Configuración local
 
 ```bash
 npm install
@@ -31,28 +33,30 @@ npm run seed:sample
 npm run dev
 ```
 
-Use a local or remote MongoDB 6+ instance. The default local development URI is:
+Usa una instancia local o remota de MongoDB 6+. La URI local sugerida es:
 
 ```env
 MONGODB_URI=mongodb://127.0.0.1:27017/localizados_venezuela
 ```
 
-Optional admin/OCR work needs `ADMIN_SECRET`, `OPENAI_API_KEY`, and related
-values from `.env.example`. Never commit real secrets.
+El trabajo opcional de administración u OCR necesita `ADMIN_SECRET`,
+`OPENAI_API_KEY` y valores relacionados de `.env.example`. Nunca guardes
+secretos reales en commits.
 
-## Validation
+## Validación
 
-Run these before opening or updating a PR:
+Ejecuta esto antes de abrir o actualizar un PR:
 
 ```bash
 npm run check
 npm run build
 ```
 
-`npm run check` runs lint plus Prettier verification. GitHub Actions runs lint,
-format check, and build on PRs to `main` or `master`.
+`npm run check` ejecuta lint y verificación de Prettier. GitHub Actions ejecuta
+lint, format check y build en PRs hacia `main` o `master`.
 
-For data-pipeline changes, also run the relevant command:
+Para cambios en datos o scripts de importación, también ejecuta el comando
+relevante:
 
 ```bash
 npm run seed:sample
@@ -60,50 +64,61 @@ npm run seed:ocr -- --dry-run
 npm run merge
 ```
 
-Only use `npm run merge -- --apply` when the intended database write is explicit.
+Usa `npm run merge -- --apply` solo cuando la escritura en base de datos sea
+intencional y explícita.
 
-## Repository Map
+## Mapa del repositorio
 
-- `src/app/` - App Router pages and API routes
-- `src/components/` - Shared UI components and admin UI
-- `src/lib/` - Mongo models, queries, serializers, auth, OCR, analytics, helpers
-- `scripts/` - Seed, OCR import, export, duplicate-merge, and admin-secret tools
-- `seed/` - Sample seed data and seed metadata
-- `public/uploads/` - Runtime upload target; keep generated uploads out of git
-- `.github/workflows/ci.yml` - CI gate for PRs
+- `src/app/` - páginas de App Router y rutas API
+- `src/components/` - componentes compartidos y UI de administración
+- `src/lib/` - modelos Mongo, queries, serializadores, auth, OCR, analytics y
+  helpers
+- `scripts/` - herramientas de seed, importación OCR, export, merge de
+  duplicados y generación de secretos admin
+- `seed/` - datos de muestra y metadatos del seed
+- `public/uploads/` - destino runtime para subidas; no guardes uploads generados
+  en git
+- `.github/workflows/ci.yml` - control de CI para PRs
 
-## Implementation Rules
+## Reglas de implementación
 
-- Keep user-facing copy Spanish-first unless you are intentionally adding a
-  bilingual surface.
-- Reuse existing query/model/serializer helpers before introducing new database
-  access patterns.
-- Validate request input in API routes and return generic errors to clients.
-- Keep admin routes protected by the existing admin session cookie or
-  `Authorization: Bearer <ADMIN_SECRET>` pattern.
-- Keep citizen contributions in the moderation flow; do not make unreviewed
-  submissions public.
-- Treat OCR text and uploaded images as untrusted source material.
-- Do not expose raw secrets, private admin keys, OpenAI keys, or local file paths
-  to the browser.
-- Prefer soft-delete/restore patterns that already exist over hard deletes.
-- Preserve existing formatting: ESLint plus Prettier with the Tailwind plugin.
+- Mantén el texto visible para usuarios en español primero, salvo que estés
+  agregando una superficie bilingüe de forma intencional.
+- Reusa helpers existentes de queries, modelos y serializadores antes de crear
+  nuevos patrones de acceso a datos.
+- Valida inputs en rutas API y devuelve errores genéricos a clientes.
+- Mantén las rutas admin protegidas con el patrón existente de cookie de sesión
+  admin o `Authorization: Bearer <ADMIN_SECRET>`.
+- Mantén las contribuciones ciudadanas dentro del flujo de moderación; no hagas
+  públicas las contribuciones sin revisar.
+- Trata texto OCR e imágenes subidas como material no confiable.
+- No expongas secretos, llaves admin privadas, llaves de OpenAI ni rutas locales
+  al navegador.
+- Prefiere los patrones existentes de soft delete y restore antes de hard
+  deletes.
+- Conserva el formato existente: ESLint y Prettier con el plugin de Tailwind.
 
-## Data And Seeds
+## Datos y seeds
 
-`seed/sample/` is the safe development dataset and should stay small. The full
-dataset is generated by maintainers from external sources. OCR Markdown lives in
-the external OCR repository referenced by `README.md`; do not copy that repository
-into this one.
+`seed/sample/` es el dataset seguro para desarrollo y debe mantenerse pequeño. El
+dataset completo lo generan mantenedores desde fuentes externas. Los Markdown de
+OCR viven en el repositorio externo referenciado por `README.md`; no copies ese
+repositorio dentro de este.
 
-When changing scripts, keep dry-run modes useful and update `seed/README.md` or
-`README.md` if commands or file expectations change.
+Cuando cambies scripts, conserva modos dry-run útiles y actualiza `seed/README.md`
+o `README.md` si cambian comandos o expectativas de archivos.
 
-## PR Expectations
+## Expectativas de PR
 
-- Work from a fork or feature branch; keep the diff scoped to the issue.
-- Mention the issue number in the PR body.
-- Include what changed, why it changed, and how it was validated.
-- Do not include unrelated formatting churn, generated uploads, `.env*` secrets,
-  or local database artifacts.
-- If you cannot run a required check, say exactly why in the PR.
+- Trabaja desde un fork o una rama de trabajo; mantén el diff limitado al issue.
+- Menciona el número de issue en el cuerpo del PR.
+- Incluye qué cambió, por qué cambió y cómo fue validado.
+- No incluyas cambios de formato ajenos al scope, uploads generados, secretos
+  `.env*` ni artefactos de base de datos local.
+- Si no puedes ejecutar un check requerido, explica exactamente por qué en el PR.
+
+## Nota para agentes en inglés
+
+No mantengas una copia separada en inglés. Este archivo en español es la fuente
+canónica; si una herramienta necesita resumirlo o traducirlo para su ejecución,
+debe hacerlo a partir de `AGENTS.md` para evitar instrucciones divergentes.
