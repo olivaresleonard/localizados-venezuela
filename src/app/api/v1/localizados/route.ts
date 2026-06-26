@@ -1,14 +1,33 @@
 import { corsJson, corsOptions } from "@/lib/api";
-import { searchLocalizados } from "@/lib/queries";
+import {
+  coerceCondicion,
+  coerceEdad,
+  coerceTipo,
+  searchLocalizados,
+} from "@/lib/queries";
 
 export async function GET(req: Request) {
   const url = new URL(req.url);
-  const q = url.searchParams.get("q") ?? undefined;
-  const lugar = url.searchParams.get("lugar") ?? undefined;
-  const page = Number(url.searchParams.get("page") ?? "1");
-  const limit = Number(url.searchParams.get("limit") ?? "20");
+  const sp = url.searchParams;
+  const q = sp.get("q") ?? undefined;
+  const lugar = sp.get("lugar") ?? undefined;
+  const condicion = coerceCondicion(sp.get("condicion"));
+  const tipo = coerceTipo(sp.get("tipo"));
+  const edadMin = coerceEdad(sp.get("edadMin"));
+  const edadMax = coerceEdad(sp.get("edadMax"));
+  const page = Number(sp.get("page") ?? "1");
+  const limit = Number(sp.get("limit") ?? "20");
 
-  const result = await searchLocalizados({ q, lugar, page, limit });
+  const result = await searchLocalizados({
+    q,
+    lugar,
+    condicion,
+    tipo,
+    edadMin,
+    edadMax,
+    page,
+    limit,
+  });
   return corsJson(result);
 }
 

@@ -6,7 +6,12 @@ import { LocalizadoCard } from "@/components/LocalizadoCard";
 import { SearchForm } from "@/components/SearchForm";
 import { SearchResultsTracker } from "@/components/SearchResultsTracker";
 import { ShareButtons } from "@/components/ShareButtons";
-import { searchLocalizados } from "@/lib/queries";
+import {
+  coerceCondicion,
+  coerceEdad,
+  coerceTipo,
+  searchLocalizados,
+} from "@/lib/queries";
 import { shareBusqueda } from "@/lib/share";
 
 export const metadata = {
@@ -16,13 +21,36 @@ export const metadata = {
 export default async function BuscarPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; page?: string }>;
+  searchParams: Promise<{
+    q?: string;
+    condicion?: string;
+    tipo?: string;
+    edadMin?: string;
+    edadMax?: string;
+    page?: string;
+  }>;
 }) {
   const params = await searchParams;
   const q = params.q ?? "";
+  const condicion = coerceCondicion(params.condicion);
+  const tipo = coerceTipo(params.tipo);
+  const edadMin = coerceEdad(params.edadMin);
+  const edadMax = coerceEdad(params.edadMax);
   const page = Number(params.page ?? "1");
-  const result = q
-    ? await searchLocalizados({ q, page, limit: 20 })
+
+  const hasFilters = Boolean(condicion || tipo || edadMin != null || edadMax != null);
+  const hasQuery = Boolean(q || hasFilters);
+
+  const result = hasQuery
+    ? await searchLocalizados({
+        q: q || undefined,
+        condicion,
+        tipo,
+        edadMin,
+        edadMax,
+        page,
+        limit: 20,
+      })
     : { data: [], meta: { page: 1, limit: 20, total: 0, totalPages: 0 } };
 
   return (
@@ -35,22 +63,24 @@ export default async function BuscarPage({
       </div>
 
       <Suspense>
-        <SearchForm initialQ={q} />
+        <SearchForm initialQ={q} showFilters />
       </Suspense>
 
-      {q && (
+      {hasQuery && (
         <>
-          <SearchResultsTracker query={q} total={result.meta.total} />
+          {q && <SearchResultsTracker query={q} total={result.meta.total} />}
           <p className="text-sm text-slate-500">
-            {result.meta.total} resultado{result.meta.total === 1 ? "" : "s"} para
-            &ldquo;{q}&rdquo;
+            {result.meta.total} resultado{result.meta.total === 1 ? "" : "s"}
+            {q ? <> para &ldquo;{q}&rdquo;</> : " con los filtros aplicados"}
           </p>
-          <ShareButtons
-            variant="full"
-            {...shareBusqueda(q)}
-            label="Compartir esta búsqueda"
-            contentType="search"
-          />
+          {q && (
+            <ShareButtons
+              variant="full"
+              {...shareBusqueda(q)}
+              label="Compartir esta búsqueda"
+              contentType="search"
+            />
+          )}
         </>
       )}
 
@@ -58,7 +88,7 @@ export default async function BuscarPage({
         {result.data.map((item) => (
           <LocalizadoCard key={item.slug} item={item} />
         ))}
-        {q && result.data.length === 0 && (
+        {hasQuery && result.data.length === 0 && (
           <p className="rounded-lg border border-dashed border-slate-300 p-8 text-center text-slate-500">
             No hay resultados publicados. Si la persona está <strong>localizada</strong>
             , puedes{" "}
