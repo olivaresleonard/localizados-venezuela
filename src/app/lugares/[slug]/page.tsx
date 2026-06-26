@@ -36,10 +36,12 @@ export default async function LugarPage({ params }: Props) {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <GoBackButton route="/lugares" />
-        <p className="text-sm font-medium uppercase tracking-wide text-brand-600">
-          {lugar.tipo}
-        </p>
+        <div className="mb-4 flex flex-row items-center gap-4">
+          <GoBackButton route="/lugares" />
+          <p className="text-sm font-medium uppercase tracking-wide text-brand-600">
+            {lugar.tipo}
+          </p>
+        </div>
         <h1 className="text-3xl font-bold">{lugar.nombre}</h1>
         {lugar.direccion && <p className="text-slate-600">{lugar.direccion}</p>}
         <p className="text-sm text-slate-500">
