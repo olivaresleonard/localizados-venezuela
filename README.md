@@ -49,17 +49,17 @@ Abre [http://localhost:3000](http://localhost:3000).
 
 ### Variables de entorno (`.env.local`)
 
-| Variable                         | Descripción                            | Ejemplo local                                     |
-| -------------------------------- | -------------------------------------- | ------------------------------------------------- |
-| `MONGODB_URI`                    | Conexión a MongoDB                     | `mongodb://127.0.0.1:27017/localizados_venezuela` |
-| `NEXT_PUBLIC_SITE_URL`           | URL base del sitio (SEO, compartir)    | `http://localhost:3000`                           |
-| `UPLOAD_DIR`                     | Carpeta para imágenes subidas          | `./public/uploads`                                |
-| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | Site key pública de reCAPTCHA v3       | Ver `.env.example`                                |
-| `RECAPTCHA_SECRET`               | Secret de reCAPTCHA v3 (solo servidor) | Desde Google reCAPTCHA admin                      |
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID`  | ID de Google Analytics 4               | `G-GNN3P1WQW4`                                    |
-| `ADMIN_SECRET`                   | Clave(s) del panel `/admin` (coma = varios moderadores) | Generar con `npm run admin:secret` |
-| `OPENAI_API_KEY`                 | OCR de imágenes en el panel (OpenAI Vision) | `sk-...` desde [OpenAI](https://platform.openai.com/api-keys) |
-| `OPENAI_OCR_MODEL`               | Modelo Vision (opcional)               | `gpt-4o-mini` (default)                           |
+| Variable                         | Descripción                                             | Ejemplo local                                                 |
+| -------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------- |
+| `MONGODB_URI`                    | Conexión a MongoDB                                      | `mongodb://127.0.0.1:27017/localizados_venezuela`             |
+| `NEXT_PUBLIC_SITE_URL`           | URL base del sitio (SEO, compartir)                     | `http://localhost:3000`                                       |
+| `UPLOAD_DIR`                     | Carpeta para imágenes subidas                           | `./public/uploads`                                            |
+| `NEXT_PUBLIC_RECAPTCHA_SITE_KEY` | Site key pública de reCAPTCHA v3                        | Ver `.env.example`                                            |
+| `RECAPTCHA_SECRET`               | Secret de reCAPTCHA v3 (solo servidor)                  | Desde Google reCAPTCHA admin                                  |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID`  | ID de Google Analytics 4                                | `G-GNN3P1WQW4`                                                |
+| `ADMIN_SECRET`                   | Clave(s) del panel `/admin` (coma = varios moderadores) | Generar con `npm run admin:secret`                            |
+| `OPENAI_API_KEY`                 | OCR de imágenes en el panel (OpenAI Vision)             | `sk-...` desde [OpenAI](https://platform.openai.com/api-keys) |
+| `OPENAI_OCR_MODEL`               | Modelo Vision (opcional)                                | `gpt-4o-mini` (default)                                       |
 
 ## Panel de moderación (fase 2)
 
@@ -88,13 +88,13 @@ Sin `ADMIN_SECRET` el panel **no es accesible** (middleware devuelve 503 / redir
 
 ### Qué puede hacer un moderador
 
-| Área | Acciones |
-| ---- | -------- |
+| Área               | Acciones                                                                         |
+| ------------------ | -------------------------------------------------------------------------------- |
 | **Contribuciones** | Ver `pending` (persona e imagen), editar campos, aprobar → `published`, rechazar |
 | **OCR (imágenes)** | Extraer tabla con OpenAI Vision, revisar filas, asignar hospital, crear personas |
-| **Hospitales** | Elegir lugar existente o crear uno nuevo al aprobar/importar |
-| **Personas** | CRUD completo, soft delete (`deletedAt`), restaurar, mover de hospital |
-| **Masivo** | Seleccionar todo, borrar, restaurar, publicar, mover a otro lugar |
+| **Hospitales**     | Elegir lugar existente o crear uno nuevo al aprobar/importar                     |
+| **Personas**       | CRUD completo, soft delete (`deletedAt`), restaurar, mover de hospital           |
+| **Masivo**         | Seleccionar todo, borrar, restaurar, publicar, mover a otro lugar                |
 
 ### Flujo típico
 
@@ -107,17 +107,17 @@ Sin `ADMIN_SECRET` el panel **no es accesible** (middleware devuelve 503 / redir
 
 Requiere cookie de sesión (`lv_admin`) o header `Authorization: Bearer <ADMIN_SECRET>`.
 
-| Método | Ruta | Descripción |
-| ------ | ---- | ----------- |
-| POST | `/api/admin/auth/login` | Iniciar sesión |
-| POST | `/api/admin/auth/logout` | Cerrar sesión |
-| GET | `/api/admin/contribuciones` | Listar contribuciones |
-| PATCH | `/api/admin/contribuciones/{id}` | Aprobar / rechazar |
-| POST | `/api/admin/contribuciones/{id}/ocr` | Extraer (`extract`) o importar (`import`) filas OCR |
-| GET/POST | `/api/admin/localizados` | Listar / crear personas |
-| PATCH/DELETE | `/api/admin/localizados/{id}` | Editar / soft delete |
-| POST | `/api/admin/localizados/bulk` | Acciones masivas (`delete`, `restore`, `move`, `publish`, `reject`) |
-| GET/POST | `/api/admin/lugares` | Listar / crear hospitales |
+| Método       | Ruta                                 | Descripción                                                         |
+| ------------ | ------------------------------------ | ------------------------------------------------------------------- |
+| POST         | `/api/admin/auth/login`              | Iniciar sesión                                                      |
+| POST         | `/api/admin/auth/logout`             | Cerrar sesión                                                       |
+| GET          | `/api/admin/contribuciones`          | Listar contribuciones                                               |
+| PATCH        | `/api/admin/contribuciones/{id}`     | Aprobar / rechazar                                                  |
+| POST         | `/api/admin/contribuciones/{id}/ocr` | Extraer (`extract`) o importar (`import`) filas OCR                 |
+| GET/POST     | `/api/admin/localizados`             | Listar / crear personas                                             |
+| PATCH/DELETE | `/api/admin/localizados/{id}`        | Editar / soft delete                                                |
+| POST         | `/api/admin/localizados/bulk`        | Acciones masivas (`delete`, `restore`, `move`, `publish`, `reject`) |
+| GET/POST     | `/api/admin/lugares`                 | Listar / crear hospitales                                           |
 
 ### Producción (Docker)
 
@@ -294,11 +294,11 @@ Contribucion → envíos ciudadanos (persona o imagen de listado), moderadoEn/Po
 
 ## Roadmap
 
-| Fase                                                                  | Estado |
-| --------------------------------------------------------------------- | ------ |
-| Seed, búsqueda, páginas individuales, API, contribuciones en cola     | ✅     |
-| Importación OCR desde Markdown (`seed:ocr`)                           | ✅     |
-| Panel de moderación, OCR de imágenes (OpenAI), CRUD y publicación     | ✅     |
+| Fase                                                              | Estado |
+| ----------------------------------------------------------------- | ------ |
+| Seed, búsqueda, páginas individuales, API, contribuciones en cola | ✅     |
+| Importación OCR desde Markdown (`seed:ocr`)                       | ✅     |
+| Panel de moderación, OCR de imágenes (OpenAI), CRUD y publicación | ✅     |
 
 ## Stack
 

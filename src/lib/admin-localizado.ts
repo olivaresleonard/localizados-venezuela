@@ -144,7 +144,8 @@ export async function updateLocalizado(
   if (patch.edad !== undefined) doc.edad = patch.edad.trim() || undefined;
   if (patch.cedula !== undefined) doc.cedula = patch.cedula.trim() || undefined;
   if (patch.telefono !== undefined) doc.telefono = patch.telefono.trim() || undefined;
-  if (patch.direccion !== undefined) doc.direccion = patch.direccion.trim() || undefined;
+  if (patch.direccion !== undefined)
+    doc.direccion = patch.direccion.trim() || undefined;
   if (patch.observaciones !== undefined) {
     doc.observaciones = patch.observaciones.trim() || undefined;
   }
@@ -163,7 +164,10 @@ export async function updateLocalizado(
       estado: "published",
       $or: [{ deletedAt: { $exists: false } }, { deletedAt: null }],
     });
-    if (dup) throw new Error("Conflicto: ya existe otra persona publicada con ese nombre en el lugar");
+    if (dup)
+      throw new Error(
+        "Conflicto: ya existe otra persona publicada con ese nombre en el lugar"
+      );
   }
 
   await doc.save();

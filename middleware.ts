@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { ADMIN_COOKIE, getAdminSecrets, isValidAdminSecret } from "@/lib/admin-auth-core";
+import {
+  ADMIN_COOKIE,
+  getAdminSecrets,
+  isValidAdminSecret,
+} from "@/lib/admin-auth-core";
 
 function isAuthed(req: NextRequest): boolean {
   const secrets = getAdminSecrets();

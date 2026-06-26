@@ -36,7 +36,10 @@ export function verifyAdminRequest(req: Request): boolean {
 
 export async function requireAdmin(req?: Request): Promise<NextResponse | null> {
   if (!isAdminConfigured()) {
-    return NextResponse.json({ error: "Panel de admin no configurado" }, { status: 503 });
+    return NextResponse.json(
+      { error: "Panel de admin no configurado" },
+      { status: 503 }
+    );
   }
 
   if (req && verifyAdminRequest(req)) return null;
