@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Suspense } from "react";
 import { DesaparecidosLink } from "@/components/DesaparecidosLink";
 import { LocalizadoCard } from "@/components/LocalizadoCard";

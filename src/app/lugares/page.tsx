@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { LugarListItem } from "@/components/LugarListItem";
 import { ShareButtons } from "@/components/ShareButtons";
 import { listLugares } from "@/lib/queries";

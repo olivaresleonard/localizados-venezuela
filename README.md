@@ -70,6 +70,32 @@ Si clonas el repo y solo existe `sample/`, `npm run seed` usa ese subset automá
 
 Más detalle en [`seed/README.md`](seed/README.md).
 
+### Importar listas OCR (Markdown)
+
+Las transcripciones de listas manuscritas viven en un repo aparte, gracias a @ecrespo:
+
+**[OCR-data_Terremoto_Venezuela_24062026](https://github.com/ecrespo/OCR-data_Terremoto_Venezuela_24062026)** — tablas `.md` por hospital y fecha.
+
+Clónalo junto al proyecto (o donde prefieras) y ejecuta el seeder. Es **idempotente**: reutiliza lugares ya existentes en MongoDB y omite personas duplicadas (`lugar + nombre normalizado`). Puedes correrlo cada vez que se agreguen archivos nuevos al repo OCR.
+
+```bash
+# junto a localizados-venezuela/
+git clone https://github.com/ecrespo/OCR-data_Terremoto_Venezuela_24062026.git
+
+cd localizados-venezuela
+
+# simular sin escribir en BD
+npm run seed:ocr -- --dry-run
+
+# importar (ruta por defecto: ../OCR-data_Terremoto_Venezuela_24062026)
+npm run seed:ocr
+
+# otra ruta al repo OCR
+npm run seed:ocr -- --path /ruta/a/OCR-data_Terremoto_Venezuela_24062026
+```
+
+Orden sugerido si partes del Excel consolidado: primero `npm run seed:excel`, luego `npm run seed:ocr` (el OCR solo inserta lo que aún no está).
+
 ### Scripts de datos
 
 | Comando                    | Descripción                                        |
@@ -78,6 +104,7 @@ Más detalle en [`seed/README.md`](seed/README.md).
 | `npm run seed`             | Importa dataset completo (o sample como fallback)  |
 | `npm run seed:export`      | Genera `seed/*.json` desde el Excel (mantenedores) |
 | `npm run seed:excel`       | Importa directo desde Excel a MongoDB              |
+| `npm run seed:ocr`         | Importa tablas `.md` del repo OCR (sin duplicar)   |
 | `npm run merge`            | Dry-run: fusiona lugares/personas duplicadas       |
 | `npm run merge -- --apply` | Aplica la fusión en MongoDB                        |
 
@@ -126,7 +153,7 @@ GitHub Actions ejecuta en cada PR:
 
 - Mejorar búsqueda y deduplicación
 - Panel de moderación (fase 2)
-- OCR de listados en imagen (fase 2)
+- Nuevas transcripciones en el [repo OCR](https://github.com/ecrespo/OCR-data_Terremoto_Venezuela_24062026) + `npm run seed:ocr`
 - Traducciones, accesibilidad, rendimiento móvil
 - Documentación de la API
 - Reportar bugs con datos de ejemplo en `seed/sample/`
@@ -139,8 +166,11 @@ src/
 ├── components/       # UI (header, footer, share, formularios…)
 └── lib/              # DB, queries, modelos, utilidades
 scripts/
-├── seed-from-json.ts # Importar seed al clonar
+├── seed-from-json.ts   # Importar seed al clonar
 ├── seed-from-excel.ts
+├── seed-from-ocr-md.ts # Importar .md del repo OCR
+├── lib/ocr-md-parser.ts
+├── lib/ocr-lugares.ts
 ├── export-seed-json.ts
 └── merge-duplicates.ts
 seed/
@@ -177,7 +207,8 @@ Contribucion → envíos ciudadanos (persona o imagen de listado)
 | Fase                                                              | Estado |
 | ----------------------------------------------------------------- | ------ |
 | Seed, búsqueda, páginas individuales, API, contribuciones en cola | ✅     |
-| Moderación, OCR de listas, publicación de contribuciones          | 🔜     |
+| Importación OCR desde Markdown (`seed:ocr`)                         | ✅     |
+| Moderación, OCR automático de imágenes, publicación de contribuciones | 🔜  |
 
 ## Stack
 

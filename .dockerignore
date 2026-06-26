@@ -1,0 +1,12 @@
+node_modules
+.next
+.git
+.env
+.env.*
+!.env.example
+public/uploads/*
+!public/uploads/.gitkeep
+*.md
+.husky
+.github
+.vscode

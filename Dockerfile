@@ -10,6 +10,8 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV MONGODB_URI=mongodb://127.0.0.1:27017/build
+ENV NEXT_PUBLIC_SITE_URL=https://localizadosvenezuela.com
 RUN npm run build
 
 FROM node:22-alpine AS runtime

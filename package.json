@@ -15,6 +15,7 @@
     "seed": "tsx scripts/seed-from-json.ts",
     "seed:sample": "tsx scripts/seed-from-json.ts --sample",
     "seed:excel": "tsx scripts/seed-from-excel.ts",
+    "seed:ocr": "tsx scripts/seed-from-ocr-md.ts",
     "seed:export": "tsx scripts/export-seed-json.ts",
     "merge": "tsx scripts/merge-duplicates.ts"
   },

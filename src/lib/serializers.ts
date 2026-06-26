@@ -1,8 +1,7 @@
-import type { LocalizadoDoc } from "@/lib/models/Localizado";
-import type { LugarDoc } from "@/lib/models/Lugar";
+import type { LocalizadoSource, LugarSource } from "@/lib/mongoose-types";
 import type { LocalizadoDTO, LugarDTO } from "@/lib/types";
 
-export function toLugarDTO(lugar: LugarDoc, totalLocalizados = 0): LugarDTO {
+export function toLugarDTO(lugar: LugarSource, totalLocalizados = 0): LugarDTO {
   return {
     slug: lugar.slug,
     nombre: lugar.nombre,
@@ -15,9 +14,17 @@ export function toLugarDTO(lugar: LugarDoc, totalLocalizados = 0): LugarDTO {
 }
 
 export function toLocalizadoDTO(
-  localizado: LocalizadoDoc,
-  lugar: LugarDoc
+  localizado: LocalizadoSource,
+  lugar: LugarSource
 ): LocalizadoDTO {
+  const createdAt = localizado.createdAt;
+  const publicadoEn =
+    createdAt instanceof Date
+      ? createdAt.toISOString()
+      : typeof createdAt === "string"
+        ? createdAt
+        : new Date().toISOString();
+
   return {
     slug: localizado.slug,
     nombreCompleto: localizado.nombreCompleto,
@@ -36,6 +43,6 @@ export function toLocalizadoDTO(
       notas: localizado.fuente.notas ?? undefined,
       fecha: localizado.fuente.fecha ?? undefined,
     },
-    publicadoEn: localizado.createdAt?.toISOString?.() ?? new Date().toISOString(),
+    publicadoEn,
   };
 }

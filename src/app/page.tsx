@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { HomeActionCards } from "@/components/HomeActionCards";
 import { SearchForm } from "@/components/SearchForm";
 import { ShareButtons } from "@/components/ShareButtons";
