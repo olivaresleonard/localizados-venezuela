@@ -2,6 +2,7 @@
 
 import { fetchApi } from "@/lib/fetch-api";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 type Lugar = { id: string; nombre: string; slug: string; totalPublicados: number };
 type Contrib = {
@@ -115,7 +116,8 @@ export function AdminPanel() {
 
   const [filtroEstado, setFiltroEstado] = useState("");
   const [filtroLugar, setFiltroLugar] = useState("");
-  const [filtroQ, setFiltroQ] = useState("");
+  const [filtroQInput, setFiltroQInput] = useState("");
+  const filtroQ = useDebounce(filtroQInput, 300);
   const [verBorrados, setVerBorrados] = useState(false);
 
   const [editPersona, setEditPersona] = useState<Persona | null>(null);
@@ -193,7 +195,7 @@ export function AdminPanel() {
     setLoading(true);
     setErr("");
     try {
-      const result = await fetchApi<{ affected: number }>(
+      const result = await fetchApi<{ affected: number; total?: number }>(
         "/api/admin/localizados/bulk",
         {
           method: "POST",
@@ -204,7 +206,13 @@ export function AdminPanel() {
         setErr(result.error.error);
         return;
       }
-      setMsg(`${action}: ${result.data.affected} registro(s)`);
+      const { affected, total = affected } = result.data;
+      const failed = total - affected;
+      setMsg(
+        failed > 0
+          ? `${action}: ${affected}/${total} (${failed} fallaron)`
+          : `${action}: ${affected} registro(s)`
+      );
       setSelected(new Set());
       await loadPersonas();
     } finally {
@@ -289,7 +297,7 @@ export function AdminPanel() {
           editPersona={editPersona}
           onFiltroEstado={setFiltroEstado}
           onFiltroLugar={setFiltroLugar}
-          onFiltroQ={setFiltroQ}
+          onFiltroQ={setFiltroQInput}
           onVerBorrados={setVerBorrados}
           onReload={() => void loadPersonas()}
           onSelectAll={(on) =>

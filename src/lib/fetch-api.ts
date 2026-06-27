@@ -2,6 +2,7 @@
 export type ApiErrorData = {
   error: string;
   code: string;
+  details?: unknown;
 };
 
 /** Resultado discriminado: éxito con data tipada o fallo con error estructurado. */
@@ -34,10 +35,11 @@ function isRetryableStatus(status: number): boolean {
 
 function extractHttpError(body: unknown, status: number): ApiErrorData {
   if (body && typeof body === "object" && "error" in body) {
-    const record = body as { error?: unknown; code?: unknown };
+    const record = body as { error?: unknown; code?: unknown; details?: unknown };
     const message = typeof record.error === "string" ? record.error : `Error ${status}`;
     const code = typeof record.code === "string" ? record.code : String(status);
-    return { error: message, code };
+    const details = "details" in record ? record.details : undefined;
+    return { error: message, code, details };
   }
   return { error: `Error ${status}`, code: String(status) };
 }
