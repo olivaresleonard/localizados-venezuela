@@ -36,7 +36,7 @@ export function getSessionCookieOptions(isProduction: boolean) {
     httpOnly: true,
     secure: isProduction,
     sameSite: "strict" as const,
-    path: "/admin",
+    path: "/",
     maxAge: SESSION_MAX_AGE_SECONDS,
   };
 }

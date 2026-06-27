@@ -47,7 +47,7 @@ export async function createAdminSessionResponse(): Promise<NextResponse> {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    path: "/admin",
+    path: "/",
     maxAge,
   });
   return res;
@@ -63,7 +63,7 @@ export async function clearAdminSessionResponse(): Promise<NextResponse> {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
-    path: "/admin",
+    path: "/",
     maxAge: 0,
   });
   return res;

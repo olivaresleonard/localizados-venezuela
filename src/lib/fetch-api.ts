@@ -118,6 +118,9 @@ async function fetchOnce<T>(
 
     if (!res.ok) {
       const error = extractHttpError(body, res.status);
+      if (res.status === 401 && typeof window !== "undefined") {
+        window.location.href = `/admin/login?next=${encodeURIComponent(window.location.pathname)}`;
+      }
       if (retriesLeft > 0 && isRetryableStatus(res.status)) {
         await sleep(RETRY_BACKOFF_MS);
         return fetchOnce<T>(url, init, 0);
