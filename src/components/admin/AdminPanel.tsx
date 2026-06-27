@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { fetchApi } from "@/lib/fetch-api";
+import { useDebounce } from "@/lib/hooks/useDebounce";
 
 type Lugar = { id: string; nombre: string; slug: string; totalPublicados: number };
 type Contrib = {
@@ -37,13 +39,6 @@ type OcrRow = {
   observaciones?: string;
   condicion?: string;
 };
-
-async function api<T>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(url, init);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error ?? `Error ${res.status}`);
-  return data as T;
-}
 
 const inputCls = "mt-1 w-full rounded-lg border border-slate-300 px-2.5 py-1.5 text-sm";
 const btnPrimary =
@@ -121,7 +116,8 @@ export function AdminPanel() {
 
   const [filtroEstado, setFiltroEstado] = useState("");
   const [filtroLugar, setFiltroLugar] = useState("");
-  const [filtroQ, setFiltroQ] = useState("");
+  const [filtroQInput, setFiltroQInput] = useState("");
+  const filtroQ = useDebounce(filtroQInput, 300);
   const [verBorrados, setVerBorrados] = useState(false);
 
   const [editPersona, setEditPersona] = useState<Persona | null>(null);
@@ -130,15 +126,15 @@ export function AdminPanel() {
   const [ocrLugarId, setOcrLugarId] = useState("");
 
   const loadLugares = useCallback(async () => {
-    const data = await api<{ data: Lugar[] }>("/api/admin/lugares");
-    setLugares(data.data);
+    const result = await fetchApi<{ data: Lugar[] }>("/api/admin/lugares");
+    if (result.ok) setLugares(result.data.data);
   }, []);
 
   const loadContrib = useCallback(async () => {
-    const data = await api<{ data: Contrib[] }>(
+    const result = await fetchApi<{ data: Contrib[] }>(
       "/api/admin/contribuciones?estado=pending"
     );
-    setContribuciones(data.data);
+    if (result.ok) setContribuciones(result.data.data);
   }, []);
 
   const loadPersonas = useCallback(async () => {
@@ -147,8 +143,10 @@ export function AdminPanel() {
     if (filtroLugar) params.set("lugarId", filtroLugar);
     if (filtroQ) params.set("q", filtroQ);
     if (verBorrados) params.set("deleted", "1");
-    const data = await api<{ data: Persona[] }>(`/api/admin/localizados?${params}`);
-    setPersonas(data.data);
+    const result = await fetchApi<{ data: Persona[] }>(
+      `/api/admin/localizados?${params}`
+    );
+    if (result.ok) setPersonas(result.data.data);
   }, [filtroEstado, filtroLugar, filtroQ, verBorrados]);
 
   useEffect(() => {
@@ -166,14 +164,17 @@ export function AdminPanel() {
   );
 
   async function createLugar(nombre: string) {
-    const res = await api<{ id: string }>("/api/admin/lugares", {
+    const result = await fetchApi<{ id: string }>("/api/admin/lugares", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nombre }),
     });
+    if (!result.ok) {
+      setErr(result.error.error);
+      return;
+    }
     await loadLugares();
-    setOcrLugarId(res.id);
-    setMsg(`Lugar «${nombre}» listo`);
+    setOcrLugarId(result.data.id);
+    setMsg(`Lugar \u00ab${nombre}\u00bb listo`);
   }
 
   async function bulk(action: string, lugarId?: string) {
@@ -182,12 +183,18 @@ export function AdminPanel() {
     setLoading(true);
     setErr("");
     try {
-      const res = await api<{ affected: number }>("/api/admin/localizados/bulk", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ids, action, lugarId }),
-      });
-      setMsg(`${action}: ${res.affected} registro(s)`);
+      const result = await fetchApi<{ affected: number }>(
+        "/api/admin/localizados/bulk",
+        {
+          method: "POST",
+          body: JSON.stringify({ ids, action, lugarId }),
+        }
+      );
+      if (!result.ok) {
+        setErr(result.error.error);
+        return;
+      }
+      setMsg(`${action}: ${result.data.affected} registro(s)`);
       setSelected(new Set());
       await loadPersonas();
     } catch (e) {
@@ -271,7 +278,7 @@ export function AdminPanel() {
           editPersona={editPersona}
           onFiltroEstado={setFiltroEstado}
           onFiltroLugar={setFiltroLugar}
-          onFiltroQ={setFiltroQ}
+          onFiltroQ={setFiltroQInput}
           onVerBorrados={setVerBorrados}
           onReload={() => void loadPersonas()}
           onSelectAll={(on) =>
@@ -343,9 +350,8 @@ function ContribCard({
   async function act(action: "approve" | "reject") {
     setBusy(true);
     try {
-      await api(`/api/admin/contribuciones/${contrib.id}`, {
+      const result = await fetchApi(`/api/admin/contribuciones/${contrib.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           action,
           notasModeracion: notas || undefined,
@@ -353,6 +359,10 @@ function ContribCard({
           persona: contrib.tipo === "persona" ? persona : undefined,
         }),
       });
+      if (!result.ok) {
+        onError(result.error.error);
+        return;
+      }
       await onDone();
     } catch (e) {
       onError(String(e));
@@ -364,15 +374,18 @@ function ContribCard({
   async function runOcr() {
     setBusy(true);
     try {
-      const res = await api<{ rows: OcrRow[] }>(
+      const result = await fetchApi<{ rows: OcrRow[] }>(
         `/api/admin/contribuciones/${contrib.id}/ocr`,
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "extract" }),
         }
       );
-      onOcr(contrib.id, res.rows ?? []);
+      if (!result.ok) {
+        onError(result.error.error);
+        return;
+      }
+      onOcr(contrib.id, result.data.rows ?? []);
     } catch (e) {
       onError(String(e));
     } finally {
@@ -517,11 +530,14 @@ function OcrImportModal({
     }
     setBusy(true);
     try {
-      await api(`/api/admin/contribuciones/${contribId}/ocr`, {
+      const result = await fetchApi(`/api/admin/contribuciones/${contribId}/ocr`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "import", rows, lugarId, estado }),
       });
+      if (!result.ok) {
+        onError(result.error.error);
+        return;
+      }
       await onImported();
     } catch (e) {
       onError(String(e));
@@ -822,9 +838,8 @@ function EditPersonaModal({
     setBusy(true);
     setError("");
     try {
-      await api(`/api/admin/localizados/${persona.id}`, {
+      const result = await fetchApi(`/api/admin/localizados/${persona.id}`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nombreCompleto: form.nombreCompleto,
           edad: form.edad,
@@ -838,6 +853,10 @@ function EditPersonaModal({
           restore: Boolean(persona.deletedAt),
         }),
       });
+      if (!result.ok) {
+        setError(result.error.error);
+        return;
+      }
       await onSaved();
     } catch (e) {
       setError(String(e));
