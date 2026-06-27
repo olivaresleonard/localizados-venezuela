@@ -240,41 +240,7 @@ Orden sugerido si partes del Excel consolidado: primero `npm run seed:excel`, lu
 
 ## Colaborar
 
-1. Haz fork del repo
-2. Crea una rama: `git checkout -b mi-feature`
-3. Instala y arranca con `npm run seed:sample && npm run dev`
-4. Haz tus cambios
-5. Asegúrate de que pasa el CI localmente:
-
-```bash
-npm run check
-npm run build
-```
-
-6. Abre un Pull Request en GitHub
-
-### Estilo de código
-
-- **ESLint** (config Next.js) + **Prettier** (con plugin Tailwind)
-- **Husky** + **lint-staged** formatean automáticamente al hacer commit
-- VS Code: instala las extensiones recomendadas (`.vscode/extensions.json`)
-
-### CI en Pull Requests
-
-GitHub Actions ejecuta en cada PR:
-
-- `npm run lint`
-- `npm run format:check`
-- `npm run build`
-
-### Ideas para contribuir
-
-- Mejorar búsqueda y deduplicación
-- Nuevas transcripciones en el [repo OCR](https://github.com/ecrespo/OCR-data_Terremoto_Venezuela_24062026) + `npm run seed:ocr`
-- Mejoras al panel de moderación (roles, historial de cambios, etc.)
-- Traducciones, accesibilidad, rendimiento móvil
-- Documentación de la API
-- Reportar bugs con datos de ejemplo en `seed/sample/`
+Consulta [CONTRIBUTING.md](CONTRIBUTING.md) para instrucciones detalladas sobre requisitos, arranque, flujo de trabajo, buenas prácticas y cómo reportar bugs.
 
 ## Estructura del proyecto
 
