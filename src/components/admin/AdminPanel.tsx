@@ -288,7 +288,7 @@ export function AdminPanel() {
           allSelected={allSelected}
           filtroEstado={filtroEstado}
           filtroLugar={filtroLugar}
-          filtroQ={filtroQ}
+          filtroQ={filtroQInput}
           verBorrados={verBorrados}
           loading={loading}
           editPersona={editPersona}
