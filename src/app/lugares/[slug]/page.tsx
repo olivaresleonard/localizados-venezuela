@@ -5,6 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import { LocalizadoCard } from "@/components/LocalizadoCard";
 import { Pagination } from "@/components/Pagination";
 import { ShareButtons } from "@/components/ShareButtons";
+import { GoBackButton } from "@/components/GoBackButton";
 import { getLugarBySlug } from "@/lib/queries";
 import { parsePageParam } from "@/lib/url";
 import { absoluteUrl, shareLugar } from "@/lib/share";
@@ -47,9 +48,12 @@ export default async function LugarPage({ params, searchParams }: Props) {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        <p className="text-sm font-medium uppercase tracking-wide text-brand-600">
-          {lugar.tipo}
-        </p>
+        <div className="mb-4 flex flex-row items-center gap-4">
+          <GoBackButton route="/lugares" />
+          <p className="text-sm font-medium uppercase tracking-wide text-brand-600">
+            {lugar.tipo}
+          </p>
+        </div>
         <h1 className="text-3xl font-bold">{lugar.nombre}</h1>
         {lugar.direccion && <p className="text-slate-600">{lugar.direccion}</p>}
         <p className="text-sm text-slate-500">
