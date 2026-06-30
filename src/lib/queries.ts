@@ -39,7 +39,12 @@ function buildSearchFilter(q?: string, lugarId?: unknown) {
 
   const digits = term.replace(/\D/g, "");
   if (digits.length >= 4) {
-    filter.cedula = new RegExp(digits);
+    // Igualdad exacta, no subcadena. `new RegExp(digits)` sin anclar matcheaba
+    // cualquier cédula que CONTUVIERA esos dígitos, lo que permitía enumerar
+    // toda la PII del registro desde la API pública (sin auth) iterando
+    // fragmentos, además de forzar un COLLSCAN. Una cédula es un identificador:
+    // se busca por su valor completo.
+    filter.cedula = digits;
     return filter;
   }
 
